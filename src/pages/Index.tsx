@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Dictaphone from "@/components/Speech.tsx"
 
 import grassImage from "../grass.jpg";
 
@@ -160,6 +161,8 @@ const Index = () => {
             }}
           ></Switch>
         </div>
+
+        <Dictaphone></Dictaphone>
 
         <IngredientTable
           ingredients={ingredients}
