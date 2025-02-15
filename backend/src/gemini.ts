@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "dotenv/config";
-import { AIProvider, Ingredient, Recipe } from "./types";
+import { AIProvider, Ingredient, Meal } from "./types";
 export class GeminiProvider implements AIProvider {
   private apiKey: string;
 
@@ -8,7 +8,7 @@ export class GeminiProvider implements AIProvider {
     this.apiKey = apiKey;
   }
 
-  async generateRecipe(ingredients: Ingredient[]): Promise<Recipe[]> {
+  async generateRecipe(ingredients: Ingredient[]): Promise<Meal[]> {
     /*
     export interface Ingredient {
       id: string;
@@ -21,12 +21,12 @@ export class GeminiProvider implements AIProvider {
     const genAI = new GoogleGenerativeAI(this.apiKey ?? "");
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "tunedModels/leftover-culinary-genius-3-270gzry2gonu",
     });
 
     const ingredientList = ingredients
       .map((ing) => {
-        if (ing.quantity && ing.unit) {
+        if (ing.quantity) {
           return `${ing.quantity} ${ing.name}`;
         }
         return ing.name;
@@ -72,6 +72,7 @@ Ensure all JSON fields are properly formatted and the recipe is practical and fe
     const result = await model.generateContent(prompt);
     let responseStr = result.response.text();
     responseStr = responseStr.replace("```json", "").replace("```", "");
+    console.log("Response", responseStr);
     const jsonParsed = JSON.parse(responseStr);
     return jsonParsed;
   }
@@ -82,9 +83,9 @@ Ensure all JSON fields are properly formatted and the recipe is practical and fe
   }
 
   async rankRecipes(
-    recipes: Recipe[],
+    recipes: Meal[],
     availableIngredients: Ingredient[],
-  ): Promise<Recipe[]> {
+  ): Promise<Meal[]> {
     // TODO: Implement recipe ranking with Gemini
     return [];
   }
