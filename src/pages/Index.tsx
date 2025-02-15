@@ -22,12 +22,13 @@ const Index = () => {
     try {
       // Search using the first ingredient for now
 
+      let results;
       if (!aiGen) {
-        const results = await searchMealsByIngredient(ingredients[0].name);
+        results = await searchMealsByIngredient(ingredients[0].name);
 
         setRanking(await rankRecipes(recipes, ingredients));
       } else {
-        const results = await aiSearchMeals(ingredients);
+        results = await aiSearchMeals(ingredients);
         setRanking(results[0].strMeal);
       }
 
