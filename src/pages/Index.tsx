@@ -172,7 +172,7 @@ const Index = () => {
           setShowModal(true);
         }}
       >
-        Upload a image
+        📸 Upload a image
       </Button>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold tracking-tight">
@@ -261,7 +261,7 @@ const Index = () => {
           className="w-full"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Find Recipes
+          🧑‍🍳 Find Recipes
         </Button>
       </div>
 

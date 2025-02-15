@@ -9,11 +9,11 @@ const Dictaphone = () => {
   } = useSpeechRecognition();
 
   if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
+    return <p className="my-4">Browser doesn't support speech recognition.</p>;
   }
 
   return (
-    <div className="grid grid-3">
+    <div className="grid grid-3 py-4">
       <p>Microphone: {listening ? 'on' : 'off'}</p>
       <button onClick={SpeechRecognition.startListening}>Start</button>
       <button onClick={SpeechRecognition.stopListening}>Stop</button>

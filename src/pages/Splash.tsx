@@ -102,7 +102,7 @@ const Splash = ({ onGetStarted }) => {
       <LeftSide>
         <AppName>Recipe Generator</AppName>
         <Tagline>Discover delicious meals from your leftovers.</Tagline>
-        <a href="/started"><GreenButton onClick={handleClick}>Get Started</GreenButton></a>
+        <a href="/started"><GreenButton onClick={handleClick}>🚀 Get Started</GreenButton></a>
       </LeftSide>
       <RightSide />
     </SplashContainer>
