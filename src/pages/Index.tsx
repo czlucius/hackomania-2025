@@ -3,7 +3,7 @@ import { IngredientTable, type Ingredient } from "@/components/IngredientTable";
 import { RecipeCard } from "@/components/RecipeCard";
 import { Button } from "@/components/ui/button";
 import { searchMealsByIngredient, type Meal } from "@/services/mealdb";
-import { rankRecipes } from "@/services/ranking";
+import { newRankRecipes } from "@/services/ranking";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { aiSearchMeals } from "@/services/ai";
@@ -13,7 +13,8 @@ const Index = () => {
   const [recipes, setRecipes] = useState<Meal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [aiGen, setAiGen] = useState(false);
-  const [ranking, setRanking] = useState(String);
+  const [ranking, setRanking] = useState<string>("");
+
 
   const handleSearch = async () => {
     if (ingredients.length === 0) return;
@@ -25,7 +26,7 @@ const Index = () => {
       if (!aiGen) {
         const results = await searchMealsByIngredient(ingredients[0].name);
 
-        setRanking(await rankRecipes(recipes, ingredients));
+        setRanking(await newRankRecipes(recipes, ingredients));
       } else {
         const results = await aiSearchMeals(ingredients);
         setRanking(results[0].strMeal);
@@ -38,6 +39,24 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+
+
+
+  const getRankedRecipes = (recipes: Meal[]) => {
+    // load the ranked recipe
+    for (const recipe of recipes){
+      if (recipe.strMeal == ranking){
+        return (
+          <RecipeCard
+            key={recipe.idMeal}
+            recipe={recipe}
+            userIngredients={ingredients.map((i) => i.name.toLowerCase())}
+          />
+        )
+      }
+    }
+  }
+  
 
   return (
     <div className="container max-w-5xl py-8 space-y-8">
@@ -79,7 +98,8 @@ const Index = () => {
         </Button>
       </div>
 
-      {recipes.length > 0 && (
+      {/* generate AI */}
+      {recipes.length > 0 && !aiGen && (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold tracking-tight">
             Best Recommended Recipe
@@ -94,6 +114,18 @@ const Index = () => {
                 />
               ) : null,
             )}
+          </div>
+        </div>
+      )}
+
+      {/* search AI */}
+      {aiGen && ranking != "" && (
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Best Recommended Recipe
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+      
           </div>
         </div>
       )}
