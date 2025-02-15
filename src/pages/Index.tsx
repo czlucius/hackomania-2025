@@ -8,6 +8,14 @@ import { newRankRecipes } from "@/services/ranking";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { aiSearchMeals } from "@/services/ai";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import Dictaphone from "@/components/Speech.tsx"
 
 import grassImage from "../grass.jpg";
 
@@ -92,6 +100,8 @@ const Index = () => {
             }}
           ></Switch>
         </div>
+
+        <Dictaphone></Dictaphone>
 
         <IngredientTable
           ingredients={ingredients}
