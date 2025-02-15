@@ -29,9 +29,40 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [aiGen, setAiGen] = useState(false);
   const [ranking, setRanking] = useState<string>("");
+  const [nutrition, setNutrition] = useState<Object>({});
 
   const [file, setFile] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  async function getNutritionData(foodName) {  // Accept foodName as an argument
+    try {
+      const response = await fetch('http://localhost:3000/api/nutrition', {
+        method: 'POST', // Use POST method
+        headers: {
+          'Content-Type': 'application/json', // Important: Tell the server you're sending JSON
+        },
+        body: JSON.stringify({ name: foodName }), // Send the food name in the request body
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json(); // Try to get error details from the server
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || response.statusText}`); // Include error message
+      }
+  
+      const text = await response.text();
+  
+      const cleanText = text.trim().replace(/```json\n/g, '').replace(/```/g, '');
+      const nutritionObject = JSON.parse(cleanText);
+      console.log(nutritionObject)
+      setNutrition(nutritionObject);
+  
+      return nutritionObject;
+  
+    } catch (error) {
+      console.error("Error fetching or parsing nutrition data:", error);
+      return null;
+    }
+  }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -112,6 +143,7 @@ const Index = () => {
 
         if (ranking != ""){
           jsConfetti.addConfetti();
+          getNutritionData(ranking);
         }
       } else {
         let modPrompt = "";
@@ -130,6 +162,7 @@ const Index = () => {
         results = await aiSearchMeals(ingredients, modPrompt);
         setRanking(results[0].strMeal);
         jsConfetti.addConfetti();
+        getNutritionData(ranking);
       }
 
       setRecipes(results);
@@ -284,6 +317,18 @@ const Index = () => {
                 />
               ) : null,
             )}
+          </div>
+        </div>
+      )}
+
+      {/* nutrition stats */}
+      {recipes.length > 0 && ranking != "" && ranking != null && (
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Nutrition Information
+          </h2>
+
+          <div className="grid gap-6 sm:grid-cols-2">
           </div>
         </div>
       )}

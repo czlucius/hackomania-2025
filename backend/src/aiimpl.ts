@@ -232,4 +232,10 @@ Ensure all JSON fields are properly formatted and the recipe is practical and fe
     // alert(rankingScores);
     return getNameWithHighestScore(rankingScores);
   }
+
+  async getNutrition(food: String): Promise<string> {
+    const prompt = `given the following food which is ${food}, please the the nutrition (in grams) in json format - protein, carbohydrates, fats, fiber, sugar. PLEASE only give the JSON without any other explaination. I just want the JSON. it must be more than 0 grams, can be less than 1 in decimals. like this {"fats":"5g","fiber":"5g","protein":"5g","sugar":"5g","carbohydrates":"5g"}`;
+    const result = await this.llmProvider.generateContent(prompt);
+    return result;
+  }
 }

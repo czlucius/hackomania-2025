@@ -58,4 +58,12 @@ app.post("/api/rank", async (c) => {
   return c.json(result);
 });
 
+app.post("/api/nutrition", async (c) => {
+  const body = await c.req.json();
+  console.log("Received request", body);
+  const food = body.name;
+  const result = await aiProvider.getNutrition(food);
+  return c.json(result);
+});
+
 export default app;
