@@ -103,6 +103,10 @@ export const IngredientTable: React.FC<IngredientTableProps> = ({
                 onChange={(e) =>
                   setNewIngredient({ ...newIngredient, name: e.target.value })
                 }
+                onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  addIngredient();
+                }}
               />
             </TableCell>
             <TableCell>
