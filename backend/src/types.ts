@@ -1,5 +1,8 @@
 export interface AIProvider {
-  generateRecipe(ingredients: Ingredient[]): Promise<Meal[]>;
+  generateRecipe(
+    ingredients: Ingredient[],
+    modPrompt?: string,
+  ): Promise<Meal[]>;
   analyzeImage(imageData: string): Promise<Ingredient[]>;
   rankRecipes(
     recipes: Meal[],

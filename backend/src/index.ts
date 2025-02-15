@@ -34,13 +34,15 @@ app.post("/api/analyzeImage", async (c) => {
 
 app.post("/api/gen", async (c) => {
   const body = await c.req.json();
+  const modifiers = c.req.header("X-Modifiers");
+  console.log("My Modifiers", modifiers);
   if (!Array.isArray(body)) {
     return c.json({ error: "Body must be an array" }, 400);
   }
   console.log("Received request", body);
 
   const ingredients = body;
-  const recipes = await aiProvider.generateRecipe(ingredients);
+  const recipes = await aiProvider.generateRecipe(ingredients, modifiers);
   return c.json(recipes);
 });
 

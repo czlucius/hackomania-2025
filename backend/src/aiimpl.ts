@@ -100,7 +100,10 @@ export class AIFeatureProvider implements AIProvider {
   constructor(apiKey: string) {
     this.llmProvider = new OAILLProvider(apiKey);
   }
-  async generateRecipe(ingredients: Ingredient[]): Promise<Meal[]> {
+  async generateRecipe(
+    ingredients: Ingredient[],
+    modPrompt?: string,
+  ): Promise<Meal[]> {
     /*
     export interface Ingredient {
       id: string;
@@ -131,6 +134,10 @@ export class AIFeatureProvider implements AIProvider {
       ingredients: { name: string; measure: string }[];
     }
     */
+    const modInsert = modPrompt
+      ? `Follow these modifiers too:
+${modPrompt}`
+      : "";
     const prompt = `Given these ingredients: ${ingredientList}
 
 Please generate a recipe that uses some or all of these ingredients. Return the response in the following JSON format:
@@ -154,7 +161,10 @@ Please generate a recipe that uses some or all of these ingredients. Return the 
   "notes": "Any additional notes or tips"
 }
 
+${modInsert}
+
 Ensure all JSON fields are properly formatted and the recipe is practical and feasible.`;
+    console.log("Prompt", prompt);
 
     let responseStr = await this.llmProvider.generateContent(prompt);
     responseStr = responseStr.replace("```json", "").replace("```", "");
