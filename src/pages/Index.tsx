@@ -132,7 +132,9 @@ const Index = () => {
       console.error("Error searching recipes:", error);
     } finally {
       setIsLoading(false);
-      jsConfetti.addConfetti()
+      if (ranking != ""){
+        jsConfetti.addConfetti();
+      }
     }
   };
 
