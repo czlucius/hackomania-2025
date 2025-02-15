@@ -41,6 +41,29 @@ function getNameWithHighestScore(scores) {
     return highestScoreName;
   }
 
+  export async function newRankRecipes(recipes, ingredients) {
+    try {
+      const response = await fetch('http://localhost:3000/api/rank', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ recipes, ingredients }), // Correctly stringify the body
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json(); // Try to get error details from the server
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || response.statusText}`); // Include error message
+      }
+  
+      const data = await response.json(); // Parse the JSON response
+      return data; // Return the data from the API
+    } catch (error) {
+      console.error("Error ranking recipes:", error);
+      throw error; // Re-throw the error to be handled by the caller
+    }
+  }
+
 export async function rankRecipes(recipes, ingredients){
     let rankingScores = {
     }
