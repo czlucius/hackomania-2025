@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 
 import grassImage from "../grass.jpg";
+import { Input } from "@/components/ui/input";
 
 const Index = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -34,9 +35,11 @@ const Index = () => {
       setFile(e.target.files[0]);
     }
   };
+  const [imageUploading, setImageUploading] = useState(false);
 
-  const handleUpload = async () => {
+  const handleUpload = async (event) => {
     if (!file) return;
+    setImageUploading(true);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -48,6 +51,7 @@ const Index = () => {
       });
       const result = await response.json();
       setShowModal(false);
+      setImageUploading(false);
 
       const newIngredients = result.name;
       const ingredientsObjs = newIngredients.map((name: string) => ({
@@ -73,7 +77,9 @@ const Index = () => {
           className="mb-4"
         />
         <DialogFooter>
-          <Button onClick={handleUpload}>Upload</Button>
+          <Button disabled={imageUploading} onClick={handleUpload}>
+            {imageUploading ? "Loading..." : "Upload"}
+          </Button>
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
@@ -81,6 +87,10 @@ const Index = () => {
       </DialogContent>
     </Dialog>
   );
+  const [cookingStyle, setCookingStyle] = useState("");
+  const [isHealthy, setIsHealthy] = useState(false);
+  const [seasonings, setSeasonings] = useState("");
+  const [diet, setDiet] = useState("");
 
   const handleSearch = async () => {
     if (ingredients.length === 0) return;
@@ -97,7 +107,20 @@ const Index = () => {
 
         setRanking(await newRankRecipes(recipes, ingredients));
       } else {
-        results = await aiSearchMeals(ingredients);
+        let modPrompt = "";
+        if (cookingStyle) {
+          modPrompt += `Use ${cookingStyle} cooking style. `;
+        }
+        if (isHealthy) {
+          modPrompt += `Make this recipe more healthy. `;
+        }
+        if (seasonings) {
+          modPrompt += `Use these seasonings: ${seasonings}. `;
+        }
+        if (diet) {
+          modPrompt += `Make this recipe ${diet}. `;
+        }
+        results = await aiSearchMeals(ingredients, modPrompt);
         setRanking(results[0].strMeal);
       }
 
@@ -123,6 +146,7 @@ const Index = () => {
       }
     }
   };
+  console.log("my recipes", recipes);
 
   return (
     <div className="container max-w-5xl py-8 space-y-8">
@@ -167,6 +191,62 @@ const Index = () => {
           mainIngredient={mainIngredient}
           onMainIngredientChange={setMainIngredient}
         />
+        {aiGen ? (
+          <>
+            {/* Let the user have option to choose cooking style (text), more healthy (checkbox), seasonings, diet e.g. vegan, halal, hosher (dropdown) */}
+
+            <div className="grid gap-4">
+              <div>
+                <Input
+                  placeholder="Cooking Style (e.g. Asian, Italian, etc)"
+                  value={cookingStyle}
+                  onChange={(e) => setCookingStyle(e.target.value)}
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={isHealthy}
+                  onChange={(e) => setIsHealthy(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <span>More Healthy</span>
+              </div>
+
+              <div>
+                <Input
+                  placeholder="Seasonings (e.g. herbs, spices)"
+                  value={seasonings}
+                  onChange={(e) => setSeasonings(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <select
+                  value={diet}
+                  onChange={(e) => setDiet(e.target.value)}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select Diet Restriction</option>
+                  <option value="vegan">Vegan</option>
+                  <option value="vegetarian">Vegetarian</option>
+                  <option value="halal">Halal</option>
+                  <option value="kosher">Kosher</option>
+                  <option value="gluten-free">Gluten-Free</option>
+                  <option value="dairy-free">Dairy-Free</option>
+                  <option value="keto">Keto</option>
+                  <option value="paleo">Paleo</option>
+                  <option value="low-carb">Low Carb</option>
+                  <option value="nut-free">Nut-Free</option>
+                  <option value="shellfish-free">Shellfish-Free</option>
+                  <option value="pescatarian">Pescatarian</option>
+                </select>
+              </div>
+            </div>
+          </>
+        ) : null}
+
         <Button
           onClick={handleSearch}
           disabled={ingredients.length === 0 || isLoading}
@@ -178,7 +258,7 @@ const Index = () => {
       </div>
 
       {/* generate AI */}
-      {recipes.length > 0 && !aiGen && (
+      {recipes.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold tracking-tight">
             Best Recommended Recipe
@@ -186,7 +266,7 @@ const Index = () => {
 
           <div className="grid gap-6 sm:grid-cols-2">
             {recipes.map((recipe) =>
-              recipe.strMeal == ranking ? (
+              recipe.strMeal === ranking || aiGen ? (
                 <RecipeCard
                   key={recipe.idMeal}
                   recipe={recipe}
@@ -195,16 +275,6 @@ const Index = () => {
               ) : null,
             )}
           </div>
-        </div>
-      )}
-
-      {/* search AI */}
-      {aiGen && ranking != "" && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Best Recommended Recipe
-          </h2>
-          <div className="grid gap-6 sm:grid-cols-2"></div>
         </div>
       )}
     </div>
