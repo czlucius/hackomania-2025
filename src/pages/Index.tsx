@@ -16,6 +16,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import grassImage from "../grass.jpg";
+
 const Index = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [mainIngredient, setMainIngredient] = useState("");
@@ -125,6 +127,9 @@ const Index = () => {
   return (
     <div className="container max-w-5xl py-8 space-y-8">
       <div className="space-y-2">
+        <div className="mb-8 w-full rounded h-32 overflow-hidden">
+          <img className="w-full" src={grassImage}></img>
+        </div>
         <h1 className="text-4xl font-bold tracking-tight">Recipe Generator</h1>
         <p className="text-muted-foreground">
           Enter your ingredients and discover delicious recipes you can make.
@@ -178,12 +183,7 @@ const Index = () => {
           <h2 className="text-2xl font-semibold tracking-tight">
             Best Recommended Recipe
           </h2>
-          <ShareButton
-            url="https://yourdomain.com/your-article"
-            title="Check out this awesome article!"
-            description="I found this amazing content and thought you'd like it too."
-            hashtags={["react", "typescript", "webdev"]}
-          />
+
           <div className="grid gap-6 sm:grid-cols-2">
             {recipes.map((recipe) =>
               recipe.strMeal == ranking ? (

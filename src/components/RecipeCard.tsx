@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Meal } from "@/services/mealdb";
 import ShareRecipeButton from "./ShareRecipeButton";
+import { Button } from "@/components/ui/button";
 
 interface RecipeCardProps {
   recipe: Meal;
@@ -13,7 +14,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   recipe,
   userIngredients,
 }) => {
-
+  const [viewDescription, setViewDescription] = useState(false);
   console.log(recipe)
   const missingIngredients = recipe.ingredients.filter((ing) => {
     for (const userIng of userIngredients) {
@@ -57,9 +58,19 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           <ShareRecipeButton recipe={recipe} />
         </div>
       </CardHeader>
-      <CardDescription className="p-4 space-y-4">
-        {recipe.strInstructions}
-      </CardDescription>
+      <div className = " px-4 space-y-4">
+
+      <Button onClick={()=>{setViewDescription(viewDescription => !viewDescription);}}>
+        {viewDescription ? "Hide Instructions" : "View Instructions"}
+      </Button>
+      </div>
+      {viewDescription && (
+        <div className="transition-all duration-500 ease-in-out">
+          <CardDescription className="p-4 space-y-4 ">
+            {recipe.strInstructions}
+          </CardDescription>
+        </div>
+      )}
       <CardContent className="p-4 space-y-4">
         <div className="flex gap-2 flex-wrap">
           <Badge variant="secondary">{recipe.strCategory}</Badge>
