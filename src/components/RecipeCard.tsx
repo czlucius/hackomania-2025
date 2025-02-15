@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,23 +8,47 @@ interface RecipeCardProps {
   userIngredients: string[];
 }
 
-export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredients }) => {
-  const missingIngredients = recipe.ingredients.filter(
-    (ing) => !userIngredients.includes(ing.name.toLowerCase())
-  );
+export const RecipeCard: React.FC<RecipeCardProps> = ({
+  recipe,
+  userIngredients,
+}) => {
+  const missingIngredients = recipe.ingredients.filter((ing) => {
+    for (const userIng of userIngredients) {
+      if (ing.name.toLowerCase().includes(userIng.toLowerCase())) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  // included ingredients are the ones that are not missing. included = recipe - missing
+  const includedIngredients = recipe.ingredients.filter((ing) => {
+    for (const userIng of userIngredients) {
+      if (ing.name.toLowerCase().includes(userIng.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
+  });
 
   const youtubeEmbedUrl = recipe.strYoutube?.replace("watch?v=", "embed/");
 
   return (
     <Card className="w-full overflow-hidden transition-all hover:shadow-lg">
       <CardHeader className="relative p-0">
-        <div className="h-48 overflow-hidden">
-          <img
-            src={recipe.strMealThumb}
-            alt={recipe.strMeal}
-            className="w-full h-full object-cover transition-transform hover:scale-105"
-          />
-        </div>
+        {recipe.strMealThumb ? (
+          <div className="h-48 overflow-hidden">
+            <img
+              src={recipe.strMealThumb}
+              alt={recipe.strMeal}
+              className="w-full h-full object-cover transition-transform hover:scale-105"
+              onError={(e) => {
+                // set to invisible if image fails to load
+                (e.target as HTMLImageElement).style.visibility = "hidden";
+              }}
+            />
+          </div>
+        ) : null}
         <CardTitle className="p-4 bg-white/90 backdrop-blur-sm">
           {recipe.strMeal}
         </CardTitle>
@@ -35,14 +58,29 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredients 
           <Badge variant="secondary">{recipe.strCategory}</Badge>
           <Badge variant="outline">{recipe.strArea}</Badge>
         </div>
-        
+
+        {includedIngredients.length > 0 && (
+          <div>
+            <h4 className="text-sm font-semibold mb-2">
+              Included Ingredients:
+            </h4>
+            <div className="flex gap-2 flex-wrap">
+              {includedIngredients.map((ing) => (
+                <Badge key={ing.name} variant="default">
+                  {ing.name} ({ing.quantity})
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
         {missingIngredients.length > 0 && (
           <div>
             <h4 className="text-sm font-semibold mb-2">Missing Ingredients:</h4>
             <div className="flex gap-2 flex-wrap">
               {missingIngredients.map((ing) => (
                 <Badge key={ing.name} variant="destructive">
-                  {ing.name} ({ing.measure})
+                  {ing.name} ({ing.quantity})
                 </Badge>
               ))}
             </div>

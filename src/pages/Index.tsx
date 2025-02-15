@@ -1,23 +1,31 @@
-
 import React, { useState } from "react";
 import { IngredientTable, type Ingredient } from "@/components/IngredientTable";
 import { RecipeCard } from "@/components/RecipeCard";
 import { Button } from "@/components/ui/button";
 import { searchMealsByIngredient, type Meal } from "@/services/mealdb";
 import { Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { aiSearchMeals } from "@/services/ai";
 
 const Index = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [recipes, setRecipes] = useState<Meal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [aiGen, setAiGen] = useState(false);
 
   const handleSearch = async () => {
     if (ingredients.length === 0) return;
-    
+
     setIsLoading(true);
     try {
       // Search using the first ingredient for now
-      const results = await searchMealsByIngredient(ingredients[0].name);
+      let results;
+      if (!aiGen) {
+        results = await searchMealsByIngredient(ingredients[0].name);
+      } else {
+        results = await aiSearchMeals(ingredients);
+      }
+
       setRecipes(results);
     } catch (error) {
       console.error("Error searching recipes:", error);
@@ -36,7 +44,22 @@ const Index = () => {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Your Ingredients</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Your Ingredients
+        </h2>
+        <div className="text-muted-foreground">
+          <span className="mx-3">
+            {aiGen ? "Generate with AI" : "AI-assisted search"}
+          </span>
+
+          <Switch
+            checked={aiGen}
+            onCheckedChange={(chg) => {
+              setAiGen(chg);
+            }}
+          ></Switch>
+        </div>
+
         <IngredientTable
           ingredients={ingredients}
           onIngredientsChange={setIngredients}

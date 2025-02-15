@@ -1,4 +1,4 @@
-
+import { Ingredient } from "@/components/IngredientTable";
 import { toast } from "@/hooks/use-toast";
 
 const MEALDB_BASE_URL = "https://www.themealdb.com/api/json/v1/1";
@@ -11,21 +11,25 @@ export interface Meal {
   strInstructions: string;
   strMealThumb: string;
   strYoutube: string;
-  ingredients: { name: string; measure: string }[];
+  ingredients: Ingredient[];
 }
 
-export const searchMealsByIngredient = async (ingredient: string): Promise<Meal[]> => {
+export const searchMealsByIngredient = async (
+  ingredient: string,
+): Promise<Meal[]> => {
   try {
-    const response = await fetch(`${MEALDB_BASE_URL}/filter.php?i=${ingredient}`);
+    const response = await fetch(
+      `${MEALDB_BASE_URL}/filter.php?i=${ingredient}`,
+    );
     const data = await response.json();
-    
+
     if (!data.meals) {
       return [];
     }
 
     // Get full details for each meal
     const detailedMeals = await Promise.all(
-      data.meals.map((meal: { idMeal: string }) => getMealById(meal.idMeal))
+      data.meals.map((meal: { idMeal: string }) => getMealById(meal.idMeal)),
     );
 
     return detailedMeals.filter(Boolean);
@@ -56,11 +60,11 @@ export const getMealById = async (id: string): Promise<Meal | null> => {
     for (let i = 1; i <= 20; i++) {
       const ingredient = meal[`strIngredient${i}`];
       const measure = meal[`strMeasure${i}`];
-      
+
       if (ingredient && ingredient.trim()) {
         ingredients.push({
           name: ingredient.trim(),
-          measure: measure ? measure.trim() : "",
+          quantity: measure ? measure.trim() : "",
         });
       }
     }
