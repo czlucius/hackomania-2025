@@ -25,7 +25,6 @@ const Index = () => {
       // Search using the first ingredient for now
       let results : Meal[];
       if (!aiGen) {
-        console.log(mainIngredient)
         results = await searchMealsByIngredient(mainIngredient ?? ingredients[0].name);
 
         setRanking(await rankRecipes(recipes, ingredients));
