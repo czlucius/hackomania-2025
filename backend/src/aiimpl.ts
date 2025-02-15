@@ -1,5 +1,7 @@
 import "dotenv/config";
 import OpenAI from "openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { z } from "zod";
 import { AIProvider, Ingredient, LLMProvider, Meal } from "./types";
 
 function getNameWithHighestScore(scores) {
@@ -33,7 +35,9 @@ function getNameWithHighestScore(scores) {
 
   return highestScoreName;
 }
-
+const IngredientCheck = z.object({
+  name: z.array(z.string()),
+});
 export class OAILLProvider implements LLMProvider {
   private apiKey: string;
   private openai = new OpenAI();
@@ -44,6 +48,35 @@ export class OAILLProvider implements LLMProvider {
     this.openai = new OpenAI({
       apiKey: this.apiKey,
     });
+  }
+
+  async multimodalContent(prompt: string, b64Image: string): Promise<string> {
+    const dataUrl = `data:image/jpeg;base64,${b64Image}`;
+    // console.log(dataUrl);
+    const response = await this.openai.chat.completions.create({
+      model: "gpt-4o-2024-08-06",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            {
+              type: "image_url",
+              image_url: {
+                url: dataUrl,
+              },
+            },
+          ],
+        },
+      ],
+      store: true,
+      // @ts-ignore
+      response_format: zodResponseFormat(IngredientCheck, "ingredient"),
+    });
+
+    console.log("resp", response);
+    console.log(response.choices[0].message.parsed);
+    return response.choices[0].message.content ?? "";
   }
 
   async generateContent(prompt: string): Promise<string> {
@@ -131,8 +164,21 @@ Ensure all JSON fields are properly formatted and the recipe is practical and fe
   }
 
   async analyzeImage(imageData: string): Promise<Ingredient[]> {
-    // TODO: Implement Gemini Vision API call
-    return [];
+    // Assume imageData is a base64 encoded image
+    let response = await this.llmProvider.multimodalContent(
+      `Analyze the image and return the ingredients. The image is of leftover food and include all the ingredients in the image(e.g. vegetables, rice, bread)
+
+      Return the response in the following JSON format:
+
+        ["Ingredient 1", "Ingredient 2", "Ingredient 3"]
+      `,
+      imageData,
+    );
+    console.log(response);
+    response = response.replace("```json", "").replace("```", "");
+    const parsed = JSON.parse(response);
+
+    return parsed;
   }
 
   async rankRecipes(

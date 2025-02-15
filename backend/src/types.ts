@@ -9,6 +9,7 @@ export interface AIProvider {
 
 export interface LLMProvider {
   generateContent(prompt: string): Promise<string>;
+  multimodalContent(prompt: string, b64Image: string): Promise<string>;
 }
 
 export interface Ingredient {

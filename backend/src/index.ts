@@ -2,6 +2,7 @@ import "dotenv/config";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { AIFeatureProvider } from "./aiimpl";
+// import FileReader
 const app = new Hono();
 // CORS
 app.use("/api/*", cors());
@@ -11,6 +12,24 @@ const aiProvider = new AIFeatureProvider(process.env.OPENAI_API_KEY ?? "");
 app.post("/", (c) => {
   // const a = aiProvider.generateRecipe([]);
   return c.text("Hello Hono!");
+});
+
+app.post("/api/analyzeImage", async (c) => {
+  const body = await c.req.parseBody();
+  console.log(body["file"]); // File | string
+
+  const data: File = body["file"] as File;
+
+  const bytes = await data.bytes();
+
+  const base64 = Buffer.from(bytes).toString("base64");
+  const urlSafeBase64 = base64.replace(/\+/g, "-").replace(/\//g, "_");
+  // console.log(base64);
+  const base64DataUrl = `data:image/jpeg;base64,${urlSafeBase64}`;
+
+  const analysis = await aiProvider.analyzeImage(base64);
+
+  return c.json(analysis);
 });
 
 app.post("/api/gen", async (c) => {
