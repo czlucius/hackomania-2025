@@ -10,6 +10,7 @@ import { aiSearchMeals } from "@/services/ai";
 
 const Index = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [mainIngredient, setMainIngredient] = useState("");
   const [recipes, setRecipes] = useState<Meal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [aiGen, setAiGen] = useState(false);
@@ -21,9 +22,10 @@ const Index = () => {
     setIsLoading(true);
     try {
       // Search using the first ingredient for now
-
+      let results : Meal[];
       if (!aiGen) {
-        const results = await searchMealsByIngredient(ingredients[0].name);
+        console.log(mainIngredient)
+        results = await searchMealsByIngredient(mainIngredient ?? ingredients[0].name);
 
         setRanking(await rankRecipes(recipes, ingredients));
       } else {
@@ -68,6 +70,8 @@ const Index = () => {
         <IngredientTable
           ingredients={ingredients}
           onIngredientsChange={setIngredients}
+          mainIngredient={mainIngredient}
+          onMainIngredientChange={setMainIngredient}
         />
         <Button
           onClick={handleSearch}
