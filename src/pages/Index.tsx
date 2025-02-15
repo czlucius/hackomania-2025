@@ -8,6 +8,7 @@ import { newRankRecipes } from "@/services/ranking";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { aiSearchMeals } from "@/services/ai";
+import Swal from 'sweetalert2'
 import {
   Dialog,
   DialogContent,
@@ -154,6 +155,11 @@ const Index = () => {
 
         if (ranking != ""){
           jsConfetti.addConfetti();
+          Swal.fire({
+            title: "We found a recipe for you!",
+            text: "Compare the macros, ingredients list and more",
+            icon: "success"
+          });
           getNutritionData(ranking);
         }
       } else {
@@ -173,6 +179,11 @@ const Index = () => {
         results = await aiSearchMeals(ingredients, modPrompt);
         setRanking(results[0].strMeal);
         jsConfetti.addConfetti();
+        Swal.fire({
+          title: "We found a recipe for you!",
+          text: "Compare the macros, ingredients list and more",
+          icon: "success"
+        });
         getNutritionData(ranking);
       }
 
