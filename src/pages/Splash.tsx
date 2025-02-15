@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import grassImage from "../grass.jpg";
 
 const SplashContainer = styled.div`
   display: flex;
@@ -78,7 +79,10 @@ const GreenButton = styled.button`
 
 const RightSide = styled.div`
   width: 50%;
-  background: linear-gradient(to bottom, #90EE90, #32CD32);
+//   background: linear-gradient(to bottom, #90EE90, #32CD32);
+  background-size: cover;
+  background-position: center;
+  background-image: url(${grassImage}); // Use template literal to insert the image
   background-size: cover;
   background-position: center;
 
