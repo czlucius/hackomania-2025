@@ -14,14 +14,15 @@ function getNameWithHighestScore(scores) {
     if (scores.hasOwnProperty(name)) {
       const score = scores[name];
 
-      if (typeof score !== 'number' || isNaN(score)) { // Check for non-numeric or NaN
+      if (typeof score !== "number" || isNaN(score)) {
+        // Check for non-numeric or NaN
         console.warn(`Score for ${name} is not a number. Skipping.`);
         continue;
       }
-        if (score < 0 || score > 100) {
-            console.warn(`Score for ${name} is out of range. Skipping.`);
-            continue;
-        }
+      if (score < 0 || score > 100) {
+        console.warn(`Score for ${name} is out of range. Skipping.`);
+        continue;
+      }
 
       if (score > highestScore) {
         highestScore = score;
@@ -115,44 +116,36 @@ Ensure all JSON fields are properly formatted and the recipe is practical and fe
   }
 
   async rankRecipes(
-<<<<<<< HEAD
     recipes: Meal[],
-    availableIngredients: Ingredient[],
-  ): Promise<Meal[]> {
-=======
-    recipes: Recipe[],
     ingredients: Ingredient[],
-  ): Promise<Recipe[]> {
->>>>>>> fcbbfba0d6cb7f2fc061186a0544ca76a638bb5f
+  ): Promise<Meal[]> {
     // TODO: Implement recipe ranking with Gemini
-    let rankingScores = {
-    }
+    const rankingScores = {};
 
     // Get the scores
-    for (const recipe of recipes){
-        // prompt engineering
-        let stringOfRecipe = `${recipe.strMeal} ${recipe.strCategory} ${recipe.strInstructions} ${recipe.strIngredients}`;
-        let stringOfIngredients = ""
-        // console.log("my ingredients are ,", ingredients, JSON.stringify(ingredients))
-        for (const ingredient of ingredients) {
-            const each = `${ingredient.name} (Quantity: ${ingredient.quantity})
-`
-            stringOfIngredients += each
-        }
+    for (const recipe of recipes) {
+      // prompt engineering
+      const stringOfRecipe = `${recipe.strMeal} ${recipe.strCategory} ${recipe.strInstructions} ${recipe.strIngredients}`;
+      let stringOfIngredients = "";
+      // console.log("my ingredients are ,", ingredients, JSON.stringify(ingredients))
+      for (const ingredient of ingredients) {
+        const each = `${ingredient.name} (Quantity: ${ingredient.quantity})
+`;
+        stringOfIngredients += each;
+      }
 
+      const prompt = `${stringOfRecipe}\n\nhello gemini, the above is a receipe. below is a list of ingredients we have:\n\n${stringOfIngredients}. Please return a score of 1 to 100 of how similar the ingredients matches the recipe. You must only return an integer and only a number. DONT describe why you rank it that way. DONT put the percentage sign with the number.`;
+      // console.log("our prompt", prompt)
+      // continue
 
-        let prompt = `${stringOfRecipe}\n\nhello gemini, the above is a receipe. below is a list of ingredients we have:\n\n${stringOfIngredients}. Please return a score of 1 to 100 of how similar the ingredients matches the recipe. You must only return an integer and only a number. DONT describe why you rank it that way. DONT put the percentage sign with the number.`
-        // console.log("our prompt", prompt)
-        // continue
-
-        // query a gemini
-        const result = await model.generateContent(prompt);
-        console.log(recipe.strMeal)
-        const score = result.response.text()
-        console.log(score);
-        rankingScores[recipe.strMeal] = Number(score.trim())
+      // query a gemini
+      const result = await model.generateContent(prompt);
+      console.log(recipe.strMeal);
+      const score = result.response.text();
+      console.log(score);
+      rankingScores[recipe.strMeal] = Number(score.trim());
     }
-    console.log(rankingScores)
+    console.log(rankingScores);
 
     // alert(rankingScores);
     return getNameWithHighestScore(rankingScores);
