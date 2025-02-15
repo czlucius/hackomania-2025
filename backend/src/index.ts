@@ -1,16 +1,15 @@
 import "dotenv/config";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { GeminiProvider } from "./gemini";
+import { AIFeatureProvider } from "./aiimpl";
 const app = new Hono();
 // CORS
 app.use("/api/*", cors());
 console.log("API key is", process.env.API_KEY);
-const aiProvider = new GeminiProvider(process.env.API_KEY ?? "");
+const aiProvider = new AIFeatureProvider(process.env.API_KEY ?? "");
 
 app.post("/", (c) => {
   // const a = aiProvider.generateRecipe([]);
-  console.log(a);
   return c.text("Hello Hono!");
 });
 
