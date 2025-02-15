@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Meal } from "@/services/mealdb";
@@ -14,6 +14,13 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   recipe,
   userIngredients,
 }) => {
+  useEffect(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'
+    });
+  }, []);
+
   const [viewDescription, setViewDescription] = useState(false);
   console.log(recipe)
   const missingIngredients = recipe.ingredients.filter((ing) => {
