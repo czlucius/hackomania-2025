@@ -1,12 +1,72 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from "react";
+import { IngredientTable, type Ingredient } from "@/components/IngredientTable";
+import { RecipeCard } from "@/components/RecipeCard";
+import { Button } from "@/components/ui/button";
+import { searchMealsByIngredient, type Meal } from "@/services/mealdb";
+import { Loader2 } from "lucide-react";
 
 const Index = () => {
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [recipes, setRecipes] = useState<Meal[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSearch = async () => {
+    if (ingredients.length === 0) return;
+    
+    setIsLoading(true);
+    try {
+      // Search using the first ingredient for now
+      const results = await searchMealsByIngredient(ingredients[0].name);
+      setRecipes(results);
+    } catch (error) {
+      console.error("Error searching recipes:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="container max-w-5xl py-8 space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">Recipe Generator</h1>
+        <p className="text-muted-foreground">
+          Enter your ingredients and discover delicious recipes you can make.
+        </p>
       </div>
+
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold tracking-tight">Your Ingredients</h2>
+        <IngredientTable
+          ingredients={ingredients}
+          onIngredientsChange={setIngredients}
+        />
+        <Button
+          onClick={handleSearch}
+          disabled={ingredients.length === 0 || isLoading}
+          className="w-full"
+        >
+          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Find Recipes
+        </Button>
+      </div>
+
+      {recipes.length > 0 && (
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Available Recipes
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {recipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.idMeal}
+                recipe={recipe}
+                userIngredients={ingredients.map((i) => i.name.toLowerCase())}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
