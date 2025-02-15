@@ -26,10 +26,15 @@ export const searchMealsByIngredient = async (
     if (!data.meals) {
       return [];
     }
+    // Limit to 20 meals max
+
+    const meals = data.meals.slice(0, 20);
 
     // Get full details for each meal
     const detailedMeals = await Promise.all(
-      data.meals.map((meal: { idMeal: string }) => getMealById(meal.idMeal)),
+      meals.map((meal: { idMeal: string }) => {
+        return getMealById(meal.idMeal);
+      }),
     );
 
     return detailedMeals.filter(Boolean);
