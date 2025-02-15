@@ -109,6 +109,10 @@ const Index = () => {
         );
 
         setRanking(await newRankRecipes(recipes, ingredients));
+
+        if (ranking != ""){
+          jsConfetti.addConfetti();
+        }
       } else {
         let modPrompt = "";
         if (cookingStyle) {
@@ -125,6 +129,7 @@ const Index = () => {
         }
         results = await aiSearchMeals(ingredients, modPrompt);
         setRanking(results[0].strMeal);
+        jsConfetti.addConfetti();
       }
 
       setRecipes(results);
@@ -132,9 +137,6 @@ const Index = () => {
       console.error("Error searching recipes:", error);
     } finally {
       setIsLoading(false);
-      if (ranking != ""){
-        jsConfetti.addConfetti();
-      }
     }
   };
 
@@ -266,7 +268,7 @@ const Index = () => {
       </div>
 
       {/* generate AI */}
-      {recipes.length > 0 && (
+      {recipes.length > 0 && ranking != "" && ranking != null && (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold tracking-tight">
             Best Recommended Recipe
