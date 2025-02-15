@@ -5,8 +5,8 @@ import { AIFeatureProvider } from "./aiimpl";
 const app = new Hono();
 // CORS
 app.use("/api/*", cors());
-console.log("API key is", process.env.API_KEY);
-const aiProvider = new AIFeatureProvider(process.env.API_KEY ?? "");
+console.log("API key is", process.env.OPENAI_API_KEY);
+const aiProvider = new AIFeatureProvider(process.env.OPENAI_API_KEY ?? "");
 
 app.post("/", (c) => {
   // const a = aiProvider.generateRecipe([]);
