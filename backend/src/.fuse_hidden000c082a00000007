@@ -1,5 +1,5 @@
-import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 import "dotenv/config";
+import OpenAI from "openai";
 import { AIProvider, Ingredient, Meal } from "./types";
 
 function getNameWithHighestScore(scores) {
@@ -34,33 +34,27 @@ function getNameWithHighestScore(scores) {
   return highestScoreName;
 }
 
-export class GeminiProvider implements AIProvider {
+export class OpenAIProvider implements AIProvider {
   private apiKey: string;
-  private genAI: GoogleGenerativeAI
-  private model: GenerativeModel
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
-    this.genAI = new GoogleGenerativeAI(this.apiKey ?? "");
-
-    this.model = this.genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
-    });
   }
 
-
+  private client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY, // This is the default and can be omitted
+  });
 
   async generateRecipe(ingredients: Ingredient[]): Promise<Meal[]> {
     /*
-    export interface Ingredient {
-      id: string;
-      name: string;
-      quantity?: string;
-      unit?: string;
-    } */
+      export interface Ingredient {
+        id: string;
+        name: string;
+        quantity?: string;
+        unit?: string;
+      } */
     // Make sure to include these imports:
     // import { GoogleGenerativeAI } from "@google/generative-ai";
-
 
     const ingredientList = ingredients
       .map((ing) => {
@@ -70,44 +64,32 @@ export class GeminiProvider implements AIProvider {
         return ing.name;
       })
       .join(", ");
-    /*
-    export interface Meal {
-      idMeal: "1";
-      strMeal: string;
-      strCategory: string;
-      strArea: string;
-      strInstructions: string;
-      strMealThumb: string;
-      strYoutube: string;
-      ingredients: { name: string; measure: string }[];
-    }
-    */
     const prompt = `Given these ingredients: ${ingredientList}
 
-Please generate a recipe that uses some or all of these ingredients. Return the response in the following JSON format:
+  Please generate a recipe that uses some or all of these ingredients. Return the response in the following JSON format:
 
-{
-  "strMeal": "Recipe Title",
-  "servings": "Number of servings",
-  "prepTime": "Prep time in minutes",
-  "cookTime": "Cook time in minutes",
-  "strCategory": "Category of meal",
-  "strArea": "Area of origin",
-  "ingredients": [
-    {
-      "name": "Ingredient name",
-      "quantity": "Amount and unit of measurement",
-      "qraw": "Raw quantity",
-      "unit": "Unit of measurement"
-    }
-  ],
-  "strInstructions": "Step-by-step instructions for preparing the recipe",
-  "notes": "Any additional notes or tips"
-}
+  {
+    "strMeal": "Recipe Title",
+    "servings": "Number of servings",
+    "prepTime": "Prep time in minutes",
+    "cookTime": "Cook time in minutes",
+    "strCategory": "Category of meal",
+    "strArea": "Area of origin",
+    "ingredients": [
+      {
+        "name": "Ingredient name",
+        "quantity": "Amount and unit of measurement",
+        "qraw": "Raw quantity",
+        "unit": "Unit of measurement"
+      }
+    ],
+    "strInstructions": "Step-by-step instructions for preparing the recipe",
+    "notes": "Any additional notes or tips"
+  }
 
-Ensure all JSON fields are properly formatted and the recipe is practical and feasible.`;
+  Ensure all JSON fields are properly formatted and the recipe is practical and feasible.`;
 
-    const result = await this.model.generateContent(prompt);
+    const result = await model.generateContent(prompt);
     let responseStr = result.response.text();
     responseStr = responseStr.replace("```json", "").replace("```", "");
     console.log("Response", responseStr);
@@ -130,22 +112,13 @@ Ensure all JSON fields are properly formatted and the recipe is practical and fe
     // Get the scores
     for (const recipe of recipes) {
       // prompt engineering
-      let stringOfRecipe = `${recipe.strMeal} ${recipe.strCategory} ${recipe.strInstructions}
-      
-      Ingredients:`;
+      const stringOfRecipe = `${recipe.strMeal} ${recipe.strCategory} ${recipe.strInstructions} ${recipe.strIngredients}`;
       let stringOfIngredients = "";
       // console.log("my ingredients are ,", ingredients, JSON.stringify(ingredients))
       for (const ingredient of ingredients) {
         const each = `${ingredient.name} (Quantity: ${ingredient.quantity})
-`;
+  `;
         stringOfIngredients += each;
-      }
-
-
-      for (const ingredient of recipe.ingredients) {
-        const each = `${ingredient.name} (Quantity: ${ingredient.quantity})
-`;
-        stringOfRecipe += each;
       }
 
       const prompt = `${stringOfRecipe}\n\nhello gemini, the above is a receipe. below is a list of ingredients we have:\n\n${stringOfIngredients}. Please return a score of 1 to 100 of how similar the ingredients matches the recipe. You must only return an integer and only a number. DONT describe why you rank it that way. DONT put the percentage sign with the number.`;
@@ -153,7 +126,7 @@ Ensure all JSON fields are properly formatted and the recipe is practical and fe
       // continue
 
       // query a gemini
-      const result = await this.model.generateContent(prompt);
+      const result = await model.generateContent(prompt);
       console.log(recipe.strMeal);
       const score = result.response.text();
       console.log(score);

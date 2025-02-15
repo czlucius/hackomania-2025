@@ -4,7 +4,11 @@ export interface AIProvider {
   rankRecipes(
     recipes: Meal[],
     availableIngredients: Ingredient[],
-  ): Promise<Meal[]>;
+  ): Promise<string>;
+}
+
+export interface LLMProvider {
+  generateContent(prompt: string): Promise<string>;
 }
 
 export interface Ingredient {
