@@ -52,7 +52,6 @@ export const IngredientTable: React.FC<IngredientTableProps> = ({
         <TableHeader>
           <TableRow>
             <TableHead>Ingredient</TableHead>
-            <TableHead>Quantity</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -60,7 +59,6 @@ export const IngredientTable: React.FC<IngredientTableProps> = ({
           {ingredients.map((ingredient) => (
             <TableRow key={ingredient.id}>
               <TableCell>{ingredient.name}</TableCell>
-              <TableCell>{ingredient.quantity}</TableCell>
               <TableCell>
                 <Button
                   variant="ghost"
@@ -76,18 +74,10 @@ export const IngredientTable: React.FC<IngredientTableProps> = ({
             <TableCell>
               <Input
                 placeholder="Name"
+                className ="w-full"
                 value={newIngredient.name}
                 onChange={(e) =>
                   setNewIngredient({ ...newIngredient, name: e.target.value })
-                }
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                placeholder="Quantity"
-                value={newIngredient.quantity}
-                onChange={(e) =>
-                  setNewIngredient({ ...newIngredient, quantity: e.target.value })
                 }
               />
             </TableCell>
