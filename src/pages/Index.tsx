@@ -156,7 +156,7 @@ const Index = () => {
         if (ranking != ""){
           jsConfetti.addConfetti();
           Swal.fire({
-            title: "We found a recipe for you!",
+            title: "Check out this recipe we think you'll love!",
             text: "Compare the macros, ingredients list and more",
             icon: "success"
           });
@@ -180,7 +180,7 @@ const Index = () => {
         setRanking(results[0].strMeal);
         jsConfetti.addConfetti();
         Swal.fire({
-          title: "We found a recipe for you!",
+          title: "Check out this recipe we think you'll love!",
           text: "Compare the macros, ingredients list and more",
           icon: "success"
         });
