@@ -111,12 +111,6 @@ const Index = () => {
           <h2 className="text-2xl font-semibold tracking-tight">
             Best Recommended Recipe
           </h2>
-          <ShareButton 
-        url="https://yourdomain.com/your-article"
-        title="Check out this awesome article!"
-        description="I found this amazing content and thought you'd like it too."
-        hashtags={["react", "typescript", "webdev"]}
-      />
           <div className="grid gap-6 sm:grid-cols-2">
             {recipes.map((recipe) =>
               recipe.strMeal == ranking ? (
