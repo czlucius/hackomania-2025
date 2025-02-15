@@ -245,6 +245,7 @@ const Index = () => {
             checked={aiGen}
             onCheckedChange={(chg) => {
               setAiGen(chg);
+              setRecipes([]);
             }}
           ></Switch>
         </div>
