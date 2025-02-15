@@ -3,6 +3,7 @@ import { IngredientTable, type Ingredient } from "@/components/IngredientTable";
 import { RecipeCard } from "@/components/RecipeCard";
 import { Button } from "@/components/ui/button";
 import { searchMealsByIngredient, type Meal } from "@/services/mealdb";
+import { rankRecipes } from "@/services/ranking";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { aiSearchMeals } from "@/services/ai";
@@ -12,6 +13,7 @@ const Index = () => {
   const [recipes, setRecipes] = useState<Meal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [aiGen, setAiGen] = useState(false);
+  const [ranking, setRanking] = useState(String);
 
   const handleSearch = async () => {
     if (ingredients.length === 0) return;
@@ -27,6 +29,9 @@ const Index = () => {
       }
 
       setRecipes(results);
+      const results2 = await rankRecipes(recipes, ingredients);
+      alert(results2);
+      setRanking(results2);
     } catch (error) {
       console.error("Error searching recipes:", error);
     } finally {
@@ -77,16 +82,18 @@ const Index = () => {
       {recipes.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold tracking-tight">
-            Available Recipes
+            Best Recommended Recipe
           </h2>
           <div className="grid gap-6 sm:grid-cols-2">
-            {recipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.idMeal}
-                recipe={recipe}
-                userIngredients={ingredients.map((i) => i.name.toLowerCase())}
-              />
-            ))}
+            {recipes.map((recipe) =>
+              recipe.strMeal == ranking ? (
+                <RecipeCard
+                  key={recipe.idMeal}
+                  recipe={recipe}
+                  userIngredients={ingredients.map((i) => i.name.toLowerCase())}
+                />
+              ) : null,
+            )}
           </div>
         </div>
       )}
