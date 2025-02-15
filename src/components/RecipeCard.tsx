@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Meal } from "@/services/mealdb";
+import ShareRecipeButton from "./ShareRecipeButton";
 
 interface RecipeCardProps {
   recipe: Meal;
@@ -49,9 +50,10 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
             />
           </div>
         ) : null}
-        <CardTitle className="p-4 bg-white/90 backdrop-blur-sm">
-          {recipe.strMeal}
-        </CardTitle>
+        <div className="p-4 bg-white/90 backdrop-blur-sm flex justify-between items-center">
+          <CardTitle>{recipe.strMeal}</CardTitle>
+          <ShareRecipeButton recipe={recipe} />
+        </div>
       </CardHeader>
       <CardContent className="p-4 space-y-4">
         <div className="flex gap-2 flex-wrap">
@@ -67,7 +69,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
             <div className="flex gap-2 flex-wrap">
               {includedIngredients.map((ing) => (
                 <Badge key={ing.name} variant="default">
-                  {ing.name} ({ing.quantity})
+                  {ing.name} 
                 </Badge>
               ))}
             </div>
@@ -80,7 +82,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
             <div className="flex gap-2 flex-wrap">
               {missingIngredients.map((ing) => (
                 <Badge key={ing.name} variant="destructive">
-                  {ing.name} ({ing.quantity})
+                  {ing.name} 
                 </Badge>
               ))}
             </div>
