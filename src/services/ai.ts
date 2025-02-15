@@ -11,16 +11,22 @@ export interface Meal {
   ingredients: { name: string; measure: string }[];
 }
 */
-export async function aiSearchMeals(ingredients: Ingredient[]) {
+
+export async function aiSearchMeals(
+  ingredients: Ingredient[],
+  options: string,
+) {
   const results = await (
     await fetch("http://localhost:3000/api/gen", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Modifiers": options,
       },
       body: JSON.stringify(ingredients),
     })
   ).json();
+
   console.log(results);
   return [results];
 }
