@@ -21,6 +21,15 @@ const jsConfetti = new JSConfetti()
 
 import grassImage from "../grass.jpg";
 import { Input } from "@/components/ui/input";
+import DoughnutChart from "@/components/NutritionChart"
+
+const myData = {
+  Protein: 35,
+  Carbs: 60,
+  Fats: 20,
+  Fiber: 5,
+  Sugar: 10
+};
 
 const Index = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -188,6 +197,7 @@ const Index = () => {
     }
   };
   console.log("my recipes", recipes);
+  console.log(JSON.parse(nutrition.replace("json","")))
 
   return (
     <div className="container max-w-5xl py-8 space-y-8">
@@ -302,33 +312,55 @@ const Index = () => {
 
       {/* generate AI */}
       {recipes.length > 0 && ranking != "" && ranking != null && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Best Recommended Recipe
-          </h2>
+        // <div className="space-y-4">
+        //   <h2 className="text-2xl font-semibold tracking-tight">
+        //     Best Recommended Recipe
+        //   </h2>
 
-          <div className="grid gap-6 sm:grid-cols-2">
-            {recipes.map((recipe) =>
-              recipe.strMeal === ranking || aiGen ? (
-                <RecipeCard
-                  key={recipe.idMeal}
-                  recipe={recipe}
-                  userIngredients={ingredients.map((i) => i.name.toLowerCase())}
-                />
-              ) : null,
-            )}
-          </div>
-        </div>
+        //   <div className="grid gap-6 sm:grid-cols-2">
+        //     {recipes.map((recipe) =>
+        //       recipe.strMeal === ranking || aiGen ? (
+        //         <RecipeCard
+        //           key={recipe.idMeal}
+        //           recipe={recipe}
+        //           userIngredients={ingredients.map((i) => i.name.toLowerCase())}
+        //         />
+        //       ) : null,
+        //     )}
+        //   </div>
+        // </div>
+        <></>
       )}
 
       {/* nutrition stats */}
       {recipes.length > 0 && ranking != "" && ranking != null && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Nutrition Information
-          </h2>
+        <div className="grid lg:grid-cols-3 gap-2">
+          <div className="space-y-4">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Nutrition Information
+            </h2>
+            <p>Calculated in grams (g)</p>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <DoughnutChart data={JSON.parse(nutrition.replace("json",""))} />
+            </div>
+          </div>
+
+          <div className="space-y-4 col-span-2 mb-8">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Best Recommended Recipe
+          </h2>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {recipes.map((recipe) =>
+                recipe.strMeal === ranking || aiGen ? (
+                  <RecipeCard
+                    key={recipe.idMeal}
+                    recipe={recipe}
+                    userIngredients={ingredients.map((i) => i.name.toLowerCase())}
+                  />
+                ) : null,
+              )}
+            </div>
           </div>
         </div>
       )}

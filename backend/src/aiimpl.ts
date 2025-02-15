@@ -234,7 +234,7 @@ Ensure all JSON fields are properly formatted and the recipe is practical and fe
   }
 
   async getNutrition(food: String): Promise<string> {
-    const prompt = `given the following food which is ${food}, please the the nutrition (in grams) in json format - protein, carbohydrates, fats, fiber, sugar. PLEASE only give the JSON without any other explaination. I just want the JSON. it must be more than 0 grams, can be less than 1 in decimals. like this {"fats":"5g","fiber":"5g","protein":"5g","sugar":"5g","carbohydrates":"5g"}`;
+    const prompt = `given the following food which is ${food}, please the the nutrition (in grams) in json format - protein, carbohydrates, fats, fiber, sugar. PLEASE only give the JSON without any other explaination. I just want the JSON. it must be more than 0 grams, can be less than 1 in decimals. I dont want the g like 5g. i want like this {"fats":5,"fiber":5,"protein":5,"sugar":5,"carbohydrates":5}`;
     const result = await this.llmProvider.generateContent(prompt);
     return result;
   }
