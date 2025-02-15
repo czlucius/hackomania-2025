@@ -21,17 +21,17 @@ const Index = () => {
     setIsLoading(true);
     try {
       // Search using the first ingredient for now
-      let results;
+
       if (!aiGen) {
-        results = await searchMealsByIngredient(ingredients[0].name);
+        const results = await searchMealsByIngredient(ingredients[0].name);
+
+        setRanking(await rankRecipes(recipes, ingredients));
       } else {
-        results = await aiSearchMeals(ingredients);
+        const results = await aiSearchMeals(ingredients);
+        setRanking(results[0].strMeal);
       }
 
       setRecipes(results);
-      const results2 = await rankRecipes(recipes, ingredients);
-      alert(results2);
-      setRanking(results2);
     } catch (error) {
       console.error("Error searching recipes:", error);
     } finally {
