@@ -1,20 +1,13 @@
 import React, { useState } from "react";
 import { IngredientTable, type Ingredient } from "@/components/IngredientTable";
 import { RecipeCard } from "@/components/RecipeCard";
-import ShareButton from "@/components/ShareRecipeButton";
+import ShareButton from "@/components/ShareRecipeButton"
 import { Button } from "@/components/ui/button";
 import { searchMealsByIngredient, type Meal } from "@/services/mealdb";
 import { newRankRecipes } from "@/services/ranking";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { aiSearchMeals } from "@/services/ai";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 import grassImage from "../grass.jpg";
 
@@ -26,61 +19,6 @@ const Index = () => {
   const [aiGen, setAiGen] = useState(false);
   const [ranking, setRanking] = useState<string>("");
 
-  const [file, setFile] = useState<File | null>(null);
-  const [showModal, setShowModal] = useState(false);
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("http://localhost:3000/api/analyzeImage", {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      setShowModal(false);
-
-      const newIngredients = result.name;
-      const ingredientsObjs = newIngredients.map((name: string) => ({
-        name,
-        id: Math.random().toString(36).slice(2),
-      }));
-      setIngredients([...ingredients, ...ingredientsObjs]);
-    } catch (error) {
-      alert("Error uploading image");
-    }
-  };
-
-  const UploadModal = (
-    <Dialog open={showModal} onOpenChange={setShowModal}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Upload Image</DialogTitle>
-        </DialogHeader>
-        <input
-          type="file"
-          accept="image/jpeg"
-          onChange={handleFileSelect}
-          className="mb-4"
-        />
-        <DialogFooter>
-          <Button onClick={handleUpload}>Upload</Button>
-          <Button variant="outline" onClick={() => setShowModal(false)}>
-            Cancel
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
 
   const handleSearch = async () => {
     if (ingredients.length === 0) return;
@@ -89,12 +27,9 @@ const Index = () => {
     try {
       // Search using the first ingredient for now
 
-      let results: Meal[];
-      if (!aiGen) {
-        results = await searchMealsByIngredient(
-          mainIngredient ?? ingredients[0].name,
-        );
-
+      let results : Meal[];
+      if (!aiGen) { 
+        results = await searchMealsByIngredient(mainIngredient ?? ingredients[0].name);
         setRanking(await newRankRecipes(recipes, ingredients));
       } else {
         results = await aiSearchMeals(ingredients);
@@ -109,20 +44,23 @@ const Index = () => {
     }
   };
 
+
+
   const getRankedRecipes = (recipes: Meal[]) => {
     // load the ranked recipe
-    for (const recipe of recipes) {
-      if (recipe.strMeal == ranking) {
+    for (const recipe of recipes){
+      if (recipe.strMeal == ranking){
         return (
           <RecipeCard
             key={recipe.idMeal}
             recipe={recipe}
             userIngredients={ingredients.map((i) => i.name.toLowerCase())}
           />
-        );
+        )
       }
     }
-  };
+  }
+  
 
   return (
     <div className="container max-w-5xl py-8 space-y-8">
@@ -135,13 +73,7 @@ const Index = () => {
           Enter your ingredients and discover delicious recipes you can make.
         </p>
       </div>
-      {UploadModal}
-      <Button
-        className="bg-blue-600 hover:bg-blue-800"
-        onClick={() => {
-          setShowModal(true);
-        }}
-      >
+      <Button className="bg-blue-600 hover:bg-blue-800">
         Upload a image
       </Button>
       <div className="space-y-4">
@@ -183,7 +115,6 @@ const Index = () => {
           <h2 className="text-2xl font-semibold tracking-tight">
             Best Recommended Recipe
           </h2>
-
           <div className="grid gap-6 sm:grid-cols-2">
             {recipes.map((recipe) =>
               recipe.strMeal == ranking ? (
@@ -204,7 +135,17 @@ const Index = () => {
           <h2 className="text-2xl font-semibold tracking-tight">
             Best Recommended Recipe
           </h2>
-          <div className="grid gap-6 sm:grid-cols-2"></div>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {recipes.map((recipe) =>
+              recipe.strMeal == ranking ? (
+                <RecipeCard
+                  key={recipe.idMeal}
+                  recipe={recipe}
+                  userIngredients={ingredients.map((i) => i.name.toLowerCase())}
+                />
+              ) : null,
+            )}
+          </div>
         </div>
       )}
     </div>
