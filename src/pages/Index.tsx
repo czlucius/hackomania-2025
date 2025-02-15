@@ -197,7 +197,7 @@ const Index = () => {
     }
   };
   console.log("my recipes", recipes);
-  console.log(JSON.parse(nutrition.replace("json","")))
+  // console.log(JSON.parse(nutrition.replace("json","")))
 
   return (
     <div className="container max-w-5xl py-8 space-y-8">
