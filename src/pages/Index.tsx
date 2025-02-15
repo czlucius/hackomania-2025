@@ -38,7 +38,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [aiGen, setAiGen] = useState(false);
   const [ranking, setRanking] = useState<string>("");
-  const [nutrition, setNutrition] = useState<Object>({});
+  const [nutrition, setNutrition] = useState<string>("");
 
   const [file, setFile] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -60,10 +60,12 @@ const Index = () => {
   
       const text = await response.text();
   
-      const cleanText = text.trim().replace(/```json\n/g, '').replace(/```/g, '');
+      const cleanText = text.trim().replace(/```json\n/g, '').replace(/```/g, '').replace(/\n/g, '');
       const nutritionObject = JSON.parse(cleanText);
-      console.log(nutritionObject)
-      setNutrition(nutritionObject);
+      console.log(JSON.parse(nutritionObject))
+      console.log(JSON.stringify(nutritionObject))
+      console.log(JSON.stringify(JSON.parse(nutritionObject)))
+      setNutrition(JSON.stringify(JSON.parse(nutritionObject)));
   
       return nutritionObject;
   
@@ -342,7 +344,7 @@ const Index = () => {
             <p>Calculated in grams (g)</p>
 
             <div className="grid gap-6 sm:grid-cols-2">
-              <DoughnutChart data={JSON.parse(nutrition.replace("json",""))} />
+              <DoughnutChart data={nutrition} />
             </div>
           </div>
 
