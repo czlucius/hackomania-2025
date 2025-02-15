@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 import "dotenv/config";
 import { AIProvider, Ingredient, Meal } from "./types";
 
@@ -36,16 +36,19 @@ function getNameWithHighestScore(scores) {
 
 export class GeminiProvider implements AIProvider {
   private apiKey: string;
+  private genAI: GoogleGenerativeAI
+  private model: GenerativeModel
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
+    this.genAI = new GoogleGenerativeAI(this.apiKey ?? "");
+
+    this.model = this.genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+    });
   }
 
-  private genAI = new GoogleGenerativeAI(this.apiKey ?? "");
 
-  private model = this.genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
-  });
 
   async generateRecipe(ingredients: Ingredient[]): Promise<Meal[]> {
     /*
