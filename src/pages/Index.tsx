@@ -16,6 +16,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Dictaphone from "@/components/Speech.tsx"
+import JSConfetti from 'js-confetti'
+const jsConfetti = new JSConfetti()
 
 import grassImage from "../grass.jpg";
 import { Input } from "@/components/ui/input";
@@ -130,6 +132,7 @@ const Index = () => {
       console.error("Error searching recipes:", error);
     } finally {
       setIsLoading(false);
+      jsConfetti.addConfetti()
     }
   };
 
