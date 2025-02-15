@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IngredientTable, type Ingredient } from "@/components/IngredientTable";
 import { RecipeCard } from "@/components/RecipeCard";
+import ShareButton from "@/components/ShareRecipeButton"
 import { Button } from "@/components/ui/button";
 import { searchMealsByIngredient, type Meal } from "@/services/mealdb";
 import { rankRecipes } from "@/services/ranking";
@@ -10,6 +11,7 @@ import { aiSearchMeals } from "@/services/ai";
 
 const Index = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [mainIngredient, setMainIngredient] = useState("");
   const [recipes, setRecipes] = useState<Meal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [aiGen, setAiGen] = useState(false);
@@ -22,10 +24,9 @@ const Index = () => {
     try {
       // Search using the first ingredient for now
 
-      let results;
+      let results : Meal[];
       if (!aiGen) {
-        results = await searchMealsByIngredient(ingredients[0].name);
-
+        results = await searchMealsByIngredient(mainIngredient ?? ingredients[0].name);
         setRanking(await rankRecipes(recipes, ingredients));
       } else {
         results = await aiSearchMeals(ingredients);
@@ -48,7 +49,9 @@ const Index = () => {
           Enter your ingredients and discover delicious recipes you can make.
         </p>
       </div>
-
+      <Button className="bg-blue-600 hover:bg-blue-800">
+        Upload a image
+      </Button>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold tracking-tight">
           Your Ingredients
@@ -69,6 +72,8 @@ const Index = () => {
         <IngredientTable
           ingredients={ingredients}
           onIngredientsChange={setIngredients}
+          mainIngredient={mainIngredient}
+          onMainIngredientChange={setMainIngredient}
         />
         <Button
           onClick={handleSearch}
@@ -85,6 +90,12 @@ const Index = () => {
           <h2 className="text-2xl font-semibold tracking-tight">
             Best Recommended Recipe
           </h2>
+          <ShareButton 
+        url="https://yourdomain.com/your-article"
+        title="Check out this awesome article!"
+        description="I found this amazing content and thought you'd like it too."
+        hashtags={["react", "typescript", "webdev"]}
+      />
           <div className="grid gap-6 sm:grid-cols-2">
             {recipes.map((recipe) =>
               recipe.strMeal == ranking ? (
