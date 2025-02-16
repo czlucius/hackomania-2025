@@ -379,7 +379,7 @@ const Index = () => {
         </div>
       )}
 
-      {recipes.length > 0 && ranking != "" && ranking != null && (
+      {recipes.length > 1 && ranking != "" && ranking != null && (
         <div className="space-y-4">
         <h2 className="text-2xl font-semibold tracking-tight">
         Explore More Recipes
