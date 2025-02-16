@@ -76,7 +76,7 @@ const Index = () => {
         <button onClick={SpeechRecognition.startListening}>Start recording</button>
         <button onClick={SpeechRecognition.stopListening}>Stop recording</button>
         <button onClick={resetTranscript}>Reset transcript</button>
-        <button onClick={() => {updateIngredient(transcript)}}>Add Ingredient</button>
+        <button onClick={() => {updateIngredient(transcript)}}>Add ingredient</button>
         <p>{transcript}</p>
       </div>
     );
