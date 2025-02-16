@@ -386,7 +386,7 @@ const Index = () => {
         </h2>
           <div className="grid gap-6 sm:grid-cols-3">
             {recipes.map((recipe) =>
-              recipe.strMeal != ranking || aiGen ? (
+              recipe.strMeal != ranking ? (
                 <RecipeCard
                   key={recipe.idMeal}
                   recipe={recipe}
