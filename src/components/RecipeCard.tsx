@@ -14,9 +14,16 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   recipe,
   userIngredients,
 }) => {
+  // useEffect(() => {
+  //   window.scrollTo({
+  //     top: document.body.scrollHeight,
+  //     behavior: 'smooth'
+  //   });
+  // }, []);
+
   useEffect(() => {
     window.scrollTo({
-      top: document.body.scrollHeight,
+      top: window.screen.height,
       behavior: 'smooth'
     });
   }, []);

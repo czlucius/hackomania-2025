@@ -378,6 +378,26 @@ const Index = () => {
           </div>
         </div>
       )}
+
+      {recipes.length > 0 && ranking != "" && ranking != null && (
+        <div className="space-y-4">
+        <h2 className="text-2xl font-semibold tracking-tight">
+        Explore More Recipes
+        </h2>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {recipes.map((recipe) =>
+              recipe.strMeal != ranking || aiGen ? (
+                <RecipeCard
+                  key={recipe.idMeal}
+                  recipe={recipe}
+                  userIngredients={ingredients.map((i) => i.name.toLowerCase())}
+                />
+              ) : null,
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
