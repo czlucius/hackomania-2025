@@ -16,7 +16,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import Dictaphone from "@/components/Speech.tsx"
+// import Dictaphone from "@/components/Speech.tsx"
+
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+
 import JSConfetti from 'js-confetti'
 const jsConfetti = new JSConfetti()
 
@@ -43,6 +46,42 @@ const Index = () => {
 
   const [file, setFile] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  function updateIngredient(name){
+    if (name != ""){
+      const newIngredients = [name];
+      const ingredientsObjs = newIngredients.map((name: string) => ({
+            name,
+            id: Math.random().toString(36).slice(2),
+      }));
+      setIngredients([...ingredients, ...ingredientsObjs]);
+    }
+  }
+
+  const Dictaphone = () => {
+    const {
+      transcript,
+      listening,
+      resetTranscript,
+      browserSupportsSpeechRecognition
+    } = useSpeechRecognition();
+  
+    if (!browserSupportsSpeechRecognition) {
+      return <p className="my-4">Browser doesn't support speech recognition.</p>;
+    }
+  
+    return (
+      <div className="grid grid-3 py-4">
+        <p>Microphone: {listening ? 'on' : 'off'}</p>
+        <button onClick={SpeechRecognition.startListening}>Start recording</button>
+        <button onClick={SpeechRecognition.stopListening}>Stop recording</button>
+        <button onClick={resetTranscript}>Reset transcript</button>
+        <button onClick={() => {updateIngredient(transcript)}}>Add Ingredient</button>
+        <p>{transcript}</p>
+      </div>
+    );
+  };
+  
 
   async function getNutritionData(foodName) {  // Accept foodName as an argument
     try {
